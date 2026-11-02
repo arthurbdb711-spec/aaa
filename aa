@@ -1,0 +1,348 @@
+
+--// HUYU CLIENT | MM2 EDITION
+--// Premium Minimal Loading Screen
+--// LocalScript
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local old = playerGui:FindFirstChild("LoadingScreen")
+if old then old:Destroy() end
+
+--// THEME
+
+local RED = Color3.fromRGB(145, 24, 38)
+local RED_LIGHT = Color3.fromRGB(195, 42, 57)
+local BG = Color3.fromRGB(8, 8, 10)
+local PANEL = Color3.fromRGB(13, 13, 16)
+local WHITE = Color3.fromRGB(235, 235, 240)
+local MUTED = Color3.fromRGB(105, 105, 115)
+
+--// HELPERS
+
+local function create(class, props, parent)
+    local obj = Instance.new(class)
+
+    for k, v in pairs(props) do
+        obj[k] = v
+    end
+
+    obj.Parent = parent
+    return obj
+end
+
+local function corner(parent, radius)
+    create("UICorner", {
+        CornerRadius = UDim.new(0, radius)
+    }, parent)
+end
+
+local function tween(obj, duration, props, style)
+    local t = TweenService:Create(
+        obj,
+        TweenInfo.new(
+            duration,
+            style or Enum.EasingStyle.Quart,
+            Enum.EasingDirection.Out
+        ),
+        props
+    )
+
+    t:Play()
+    return t
+end
+
+--// GUI
+
+local gui = create("ScreenGui", {
+    Name = "LoadingScreen",
+    IgnoreGuiInset = true,
+    ResetOnSpawn = false,
+    DisplayOrder = 999,
+    ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+}, playerGui)
+
+local background = create("Frame", {
+    Size = UDim2.fromScale(1, 1),
+    BackgroundColor3 = BG,
+    BorderSizePixel = 0
+}, gui)
+
+--// MAIN PANEL
+
+local panel = create("Frame", {
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.53),
+    Size = UDim2.new(0, 420, 0, 220),
+    BackgroundColor3 = PANEL,
+    BorderSizePixel = 0
+}, background)
+
+create("UISizeConstraint", {
+    MaxSize = Vector2.new(420, 220),
+    MinSize = Vector2.new(280, 220)
+}, panel)
+
+corner(panel, 10)
+
+create("UIStroke", {
+    Color = Color3.fromRGB(38, 26, 30),
+    Transparency = 0.2,
+    Thickness = 1
+}, panel)
+
+--// TOP ACCENT
+
+local accent = create("Frame", {
+    Size = UDim2.new(0, 48, 0, 2),
+    Position = UDim2.new(0, 25, 0, 0),
+    BackgroundColor3 = RED_LIGHT,
+    BorderSizePixel = 0
+}, panel)
+
+--// BRAND
+
+local brand = create("TextLabel", {
+    Position = UDim2.new(0, 25, 0, 22),
+    Size = UDim2.new(0.5, 0, 0, 25),
+    BackgroundTransparency = 1,
+    Text = "H U Y U",
+    Font = Enum.Font.GothamBold,
+    TextSize = 18,
+    TextColor3 = WHITE,
+    TextXAlignment = Enum.TextXAlignment.Left
+}, panel)
+
+--// GAME IDENTIFICATION
+
+local gameName = create("TextLabel", {
+    Position = UDim2.new(0, 25, 0, 47),
+    Size = UDim2.new(0.6, 0, 0, 14),
+    BackgroundTransparency = 1,
+    Text = "MURDER MYSTERY 2",
+    Font = Enum.Font.GothamMedium,
+    TextSize = 9,
+    TextColor3 = MUTED,
+    TextXAlignment = Enum.TextXAlignment.Left
+}, panel)
+
+--// VERSION
+
+local version = create("TextLabel", {
+    AnchorPoint = Vector2.new(1, 0),
+    Position = UDim2.new(1, -25, 0, 29),
+    Size = UDim2.new(0, 110, 0, 18),
+    BackgroundTransparency = 1,
+    Text = "CLIENT  /  V1.0",
+    Font = Enum.Font.GothamMedium,
+    TextSize = 9,
+    TextColor3 = MUTED,
+    TextXAlignment = Enum.TextXAlignment.Right
+}, panel)
+
+--// DIVIDER
+
+create("Frame", {
+    Position = UDim2.new(0, 25, 0, 72),
+    Size = UDim2.new(1, -50, 0, 1),
+    BackgroundColor3 = Color3.fromRGB(34, 30, 33),
+    BorderSizePixel = 0
+}, panel)
+
+--// TITLE
+
+local title = create("TextLabel", {
+    Position = UDim2.new(0, 25, 0, 86),
+    Size = UDim2.new(1, -50, 0, 24),
+    BackgroundTransparency = 1,
+    Text = "Preparing environment",
+    Font = Enum.Font.GothamMedium,
+    TextSize = 15,
+    TextColor3 = WHITE,
+    TextXAlignment = Enum.TextXAlignment.Left
+}, panel)
+
+local subtitle = create("TextLabel", {
+    Position = UDim2.new(0, 25, 0, 112),
+    Size = UDim2.new(1, -50, 0, 17),
+    BackgroundTransparency = 1,
+    Text = "Initializing client components...",
+    Font = Enum.Font.Gotham,
+    TextSize = 11,
+    TextColor3 = MUTED,
+    TextXAlignment = Enum.TextXAlignment.Left
+}, panel)
+
+--// PERCENTAGE
+
+local percentage = create("TextLabel", {
+    AnchorPoint = Vector2.new(1, 0),
+    Position = UDim2.new(1, -25, 0, 145),
+    Size = UDim2.new(0, 90, 0, 22),
+    BackgroundTransparency = 1,
+    Text = "0%",
+    Font = Enum.Font.GothamBold,
+    TextSize = 15,
+    TextColor3 = RED_LIGHT,
+    TextXAlignment = Enum.TextXAlignment.Right
+}, panel)
+
+--// PROGRESS BAR
+
+local bar = create("Frame", {
+    Position = UDim2.new(0, 25, 0, 153),
+    Size = UDim2.new(1, -140, 0, 4),
+    BackgroundColor3 = Color3.fromRGB(34, 30, 33),
+    BorderSizePixel = 0
+}, panel)
+
+corner(bar, 5)
+
+local fill = create("Frame", {
+    Size = UDim2.new(0, 0, 1, 0),
+    BackgroundColor3 = RED_LIGHT,
+    BorderSizePixel = 0
+}, bar)
+
+corner(fill, 5)
+
+--// FOOTER STATUS
+
+local status = create("TextLabel", {
+    Position = UDim2.new(0, 25, 0, 181),
+    Size = UDim2.new(1, -65, 0, 17),
+    BackgroundTransparency = 1,
+    Text = "INITIALIZING",
+    Font = Enum.Font.GothamMedium,
+    TextSize = 9,
+    TextColor3 = MUTED,
+    TextXAlignment = Enum.TextXAlignment.Left
+}, panel)
+
+local indicator = create("Frame", {
+    AnchorPoint = Vector2.new(1, 0.5),
+    Position = UDim2.new(1, -25, 0, 189),
+    Size = UDim2.fromOffset(5, 5),
+    BackgroundColor3 = RED_LIGHT,
+    BorderSizePixel = 0
+}, panel)
+
+corner(indicator, 10)
+
+--// PROGRESS FUNCTION
+
+local function setProgress(value, message, decimal)
+    value = math.clamp(value, 0, 100)
+
+    percentage.Text = decimal
+        and string.format("%.3f%%", value)
+        or math.floor(value) .. "%"
+
+    status.Text = string.upper(message)
+
+    tween(fill, 0.22, {
+        Size = UDim2.new(value / 100, 0, 1, 0)
+    })
+
+    tween(indicator, 0.2, {
+        BackgroundColor3 = RED_LIGHT
+    })
+end
+
+--// ENTRANCE
+
+panel.BackgroundTransparency = 1
+
+tween(panel, 0.8, {
+    BackgroundTransparency = 0,
+    Position = UDim2.fromScale(0.5, 0.5)
+})
+
+--// LOADING
+
+task.spawn(function()
+
+    setProgress(0, "Initializing", false)
+    task.wait(0.5)
+
+    -- 0 TO 70 | 30 SECONDS
+
+    for i = 1, 70 do
+
+        local message =
+            i < 30 and "Loading components" or
+            i < 55 and "Configuring modules" or
+            "Preparing environment"
+
+        setProgress(i, message, false)
+
+        task.wait(30 / 70)
+    end
+
+    -- 70 TO 100 | 10 MINUTES
+
+    setProgress(70, "Applying protection layers", true)
+
+    for i = 1, 400 do
+
+        local current = 70 + (i / 400) * 30
+
+        local message =
+            current < 83 and "Applying protection layers" or
+            current < 93 and "Verifying system integrity" or
+            "Finalizing initialization"
+
+        setProgress(current, message, true)
+
+        task.wait(600 / 400)
+    end
+
+    --// COMPLETE
+
+    setProgress(100, "Successfully loaded", true)
+
+    title.Text = "Welcome to HUYU"
+    subtitle.Text = "Client initialization completed."
+
+    task.wait(2)
+
+    --// EXIT
+
+    tween(panel, 0.65, {
+        BackgroundTransparency = 1,
+        Position = UDim2.fromScale(0.5, 0.47)
+    })
+
+    for _, obj in ipairs(panel:GetDescendants()) do
+
+        if obj:IsA("TextLabel") then
+            tween(obj, 0.4, {
+                TextTransparency = 1
+            })
+
+        elseif obj:IsA("Frame") then
+            tween(obj, 0.4, {
+                BackgroundTransparency = 1
+            })
+
+        elseif obj:IsA("UIStroke") then
+            tween(obj, 0.4, {
+                Transparency = 1
+            })
+        end
+    end
+
+    tween(background, 0.7, {
+        BackgroundTransparency = 1
+    })
+
+    task.wait(0.8)
+
+    if gui.Parent then
+        gui:Destroy()
+    end
+
+end)
